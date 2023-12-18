@@ -49,7 +49,6 @@ def note_update(index):
             break
         else:
             print('Такого № в меню нет!')
-    note_save()
 
 
 def note_open():
@@ -61,7 +60,12 @@ def note_open():
 
 
 def note_delete(index):
-    pass
+    if notes.get(index):
+        notes.pop(index)
+        print(f'Заметка c индексом {index} была успешно удалена.')
+    else:
+        print('Заметки с таким индентификатором не существует!')
+
 
 
 def note_create(name):
@@ -73,6 +77,7 @@ def note_create(name):
 def note_save():
     with open('notes.json', 'w') as f:
         json.dump(notes, f)
+        print('Notes was saved!')
 
 
 def check_input(text):
@@ -95,6 +100,8 @@ def choices(choice=None):
         /delete N - Удалить заметку, где N - её уникальный номер.
         /update N - Редактировать заметку, где N - её уникальный номер.
         /show N - Показать заметку, где N - её уникальный номер.
+        /save - Сохранить изменения.
+        /quit - Закрыть программу. (Изменения не сохраняются, если перед командой не выполнить /save !)
         """)
     elif choice == '/list':
         note_list()
@@ -118,6 +125,11 @@ def choices(choice=None):
             note_show(int(modif))
         else:
             print('Вы не ввели номер заметки!')
+    elif choice == '/save':
+        note_save()
+    elif choice == '/quit':
+        print('Всего хорошего!')
+        quit()
     else:
         print('Данной команды не существует.')
 
