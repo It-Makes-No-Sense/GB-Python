@@ -2,16 +2,19 @@
 # в файл, уметь читать данные из файла, делать выборку по дате, выводить на
 # экран выбранную запись, выводить на экран весь список записок, добавлять
 # записку, редактировать ее и удалять.
-from datetime import datetime
+import time
 import json
 
 
 def note_list():
+    global revers
     cnt = len(notes.keys())
     print(f'Кол-во заметок: {cnt}')
+    list_d = list(notes.items())
+    list_d.sort(key=lambda x: x[1][3], reverse=revers)
     if cnt > 0:
-        for i, j in notes.items():
-            print(f'{i}:{j[0]}')
+        for i, j in list_d:
+            print(f'{i}, Name:{j[0]}, Create:{j[2]}, LastUpdate:{j[3]}')
 
 
 def note_show(index):
@@ -32,18 +35,19 @@ def note_update(index):
         choice_upd = int(input("""
         1 - Чтобы изменить название заметки.
         2 - Чтобы изменить тело заметки.
-        4 - Покинуть режим редактирования.
-        """))
+        3 - Покинуть режим редактирования."""))
         if choice_upd == 1:
             name = input('Введите новое название.').strip()
             if len(name) > 0:
                 note[0] = name
+                note[3] = time.strftime("%d-%m-%Y %H:%M:%S")
                 notes[index] = note
             else:
                 print('Имя файла не может быть пустым!')
         elif choice_upd == 2:
             body = input('Введите новое тело.').strip()
             note[1] = body
+            note[3] = time.strftime("%d-%m-%Y %H:%M:%S")
             notes[index] = note
         elif choice_upd == 3:
             break
@@ -67,10 +71,13 @@ def note_delete(index):
         print('Заметки с таким индентификатором не существует!')
 
 
-
 def note_create(name):
-    notes[max(notes.keys()) + 1] = [name, 'Empty', datetime.strftime("%d/%m/%Y %H:%M:%S"),
-                                    datetime.strftime("%d/%m/%Y %H:%M:%S")]
+    if len(notes.keys()) == 0:
+        num = 0
+    else:
+        num = max(notes.keys())
+    notes[num + 1] = [name, 'Empty', time.strftime("%d-%m-%Y %H:%M:%S"),
+                      time.strftime("%d-%m-%Y %H:%M:%S")]
     print(f'Заметка {name} была успешно создана! Её идентификатор {max(notes.keys())}')
 
 
@@ -82,7 +89,7 @@ def note_save():
 
 def check_input(text):
     if ' ' in text:
-        res = text.split(' ')[1]
+        res = text.split(' ', 1)[1]
         if res == '':
             return None
         else:
@@ -92,9 +99,11 @@ def check_input(text):
 
 
 def choices(choice=None):
+    global revers
     modif = check_input(choice)
     if choice == '/help':
         print("""
+        /sort - Поменять сортировку по времени.
         /list - Показать список всех заметок.
         /create NAME - Создать новую заметку, где NAME, её название.
         /delete N - Удалить заметку, где N - её уникальный номер.
@@ -105,6 +114,8 @@ def choices(choice=None):
         """)
     elif choice == '/list':
         note_list()
+    elif choice == '/sort':
+        revers = not revers
     elif '/create' in choice:
         if modif:
             note_create(modif)
@@ -112,17 +123,17 @@ def choices(choice=None):
             print('Вы не ввели имя заметки!')
     elif '/delete' in choice:
         if modif:
-            note_delete(int(modif))
+            note_delete(modif)
         else:
             print('Вы не ввели номер заметки!')
     elif '/update' in choice:
         if modif:
-            note_update(int(modif))
+            note_update(modif)
         else:
             print('Вы не ввели номер заметки!')
     elif '/show' in choice:
         if modif:
-            note_show(int(modif))
+            note_show(modif)
         else:
             print('Вы не ввели номер заметки!')
     elif choice == '/save':
@@ -134,8 +145,12 @@ def choices(choice=None):
         print('Данной команды не существует.')
 
 
+revers = True
 notes = note_open()
 
 while True:
-    print('Введите /help для вывода списка команд.')
-    choices(input("Введите команду:").strip())
+    print('\nВведите /help для вывода списка команд.')
+    try:
+        choices(input("Введите команду:").strip())
+    except ValueError as e:
+        print("Ошибка при передаче значения, указан не тот тип данных.")
