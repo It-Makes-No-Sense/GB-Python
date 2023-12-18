@@ -3,6 +3,7 @@
 # экран выбранную запись, выводить на экран весь список записок, добавлять
 # записку, редактировать ее и удалять.
 from datetime import datetime
+import json
 
 
 def note_list():
@@ -14,7 +15,14 @@ def note_list():
 
 
 def note_show(index):
-    pass
+    note = notes[index]
+    print(f"""
+    Индентификатор: {index}
+    Название: {note[0]}
+    Тело: {note[1]}
+    Дата создания: {note[2]}
+    Дата обновления: {note[3]}
+    """)
 
 
 def note_update(index):
@@ -36,7 +44,8 @@ def note_create(name):
 
 
 def note_save():
-    pass
+    with open('notes.json', 'w') as f:
+        json.dump(notes, f)
 
 
 def check_input(text):
@@ -86,7 +95,11 @@ def choices(choice=None):
         print('Данной команды не существует.')
 
 
-notes = {}
+try:
+    with open('notes.json', 'r') as file:
+        notes = json.load(file)
+except:
+    notes = {}
 
 while True:
     print('Введите /help для вывода списка команд.')
