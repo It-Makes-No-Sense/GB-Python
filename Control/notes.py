@@ -53,7 +53,11 @@ def note_update(index):
 
 
 def note_open():
-    pass
+    try:
+        with open('notes.json', 'r') as f:
+            return json.load(f)
+    except:
+        return {}
 
 
 def note_delete(index):
@@ -118,11 +122,7 @@ def choices(choice=None):
         print('Данной команды не существует.')
 
 
-try:
-    with open('notes.json', 'r') as file:
-        notes = json.load(file)
-except:
-    notes = {}
+notes = note_open()
 
 while True:
     print('Введите /help для вывода списка команд.')
