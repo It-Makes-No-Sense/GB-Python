@@ -26,7 +26,30 @@ def note_show(index):
 
 
 def note_update(index):
-    pass
+    note = notes[index]
+    while True:
+        note_show(index)
+        choice_upd = int(input("""
+        1 - Чтобы изменить название заметки.
+        2 - Чтобы изменить тело заметки.
+        4 - Покинуть режим редактирования.
+        """))
+        if choice_upd == 1:
+            name = input('Введите новое название.').strip()
+            if len(name) > 0:
+                note[0] = name
+                notes[index] = note
+            else:
+                print('Имя файла не может быть пустым!')
+        elif choice_upd == 2:
+            body = input('Введите новое тело.').strip()
+            note[1] = body
+            notes[index] = note
+        elif choice_upd == 3:
+            break
+        else:
+            print('Такого № в меню нет!')
+    note_save()
 
 
 def note_open():
