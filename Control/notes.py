@@ -13,7 +13,7 @@ def note_list():
             print(f'{i}:{j[0]}')
 
 
-def note_show():
+def note_show(index):
     pass
 
 
@@ -58,6 +58,7 @@ def choices(choice=None):
         /create NAME - Создать новую заметку, где NAME, её название.
         /delete N - Удалить заметку, где N - её уникальный номер.
         /update N - Редактировать заметку, где N - её уникальный номер.
+        /show N - Показать заметку, где N - её уникальный номер.
         """)
     elif choice == '/list':
         note_list()
@@ -76,6 +77,13 @@ def choices(choice=None):
             note_update(int(modif))
         else:
             print('Вы не ввели номер заметки!')
+    elif '/show' in choice:
+        if modif:
+            note_show(int(modif))
+        else:
+            print('Вы не ввели номер заметки!')
+    else:
+        print('Данной команды не существует.')
 
 
 notes = {}
